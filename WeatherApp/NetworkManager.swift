@@ -9,9 +9,6 @@ import Foundation
 import CoreLocation
 
 class NetworkManager {
-    /* работа с помощью completionHandler
-    func fetchCurrentWeather(forCity city: String, completionHandler: @escaping (CurrentWeather) -> (Void)) {
-     */
     
     enum RequestType {
         case cityName(city: String)
@@ -20,7 +17,6 @@ class NetworkManager {
     
     var onCompletion: ((CurrentWeather) -> Void)?
     
-    //пишем универсальный метод для работы с разными запросами
     func fetchCurrentWeather(forRequestType requestType: RequestType) {
         var urlString = ""
         
@@ -35,36 +31,22 @@ class NetworkManager {
         
     }
     
-//    func fetchCurrentWeather(forCity city: String) {
-//        let urlString = "https://api.openweathermap.org/data/2.5/weather?q=\(city)&apikey=\(apiKey)&units=metric&lang=\(countryKey)"
-//        performRequest(withURLString: urlString)
-//    }
-//
-//    func fetchCurrentWeather(forLatitude: CLLocationDegrees, longitude: CLLocationDegrees) {
-//        let urlString = "https://api.openweathermap.org/data/2.5/weather?lat=\(forLatitude)&lon=\(longitude)&appid={API key}"
-//        performRequest(withURLString: urlString)
-//    }
     
     fileprivate func performRequest(withURLString urlString: String) {
         guard let url = URL(string: urlString) else {return}
 
-        //создаем стандратную сессию
         let session = URLSession(configuration: .default)
         
-        //для сессии создаем задачу
         let task = session.dataTask(with: url) { data, response, error in
-            //проверяем, что у нас есть данные
             if let data = data {
                 if let currentWeather = self.parseJSON(withData: data) {
                     self.onCompletion?(currentWeather)
                 }
             }
         }
-        //пишем task.resume, чтобы инициировать запрос
         task.resume()
     }
     
-    // функция для парсинга JSON
     fileprivate func parseJSON(withData data: Data) -> CurrentWeather? {
         let decoder = JSONDecoder()
         do {

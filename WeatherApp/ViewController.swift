@@ -27,21 +27,12 @@ class ViewController: UIViewController {
     
     @IBAction func searchButtonPressed(_ sender: Any) {
         self.presentSearchAlertController(with: "Enter city name", message: nil, style: .alert) { [unowned self] city in
-            /* работа с помощью completionHandler
-             self.networkManager.fetchCurrentWeather(forCity: city) { currentWeather in
-             }
-             */
-            
             self.networkManager.fetchCurrentWeather(forRequestType: .cityName(city: city))
         }
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        /* работа с помощью completionHandler
-         networkManager.fetchCurrentWeather(forCity: "London") { currentWeather in
-         */
-        
         networkManager.onCompletion = { [weak self] currentWeather in
             guard let self = self else {return}
             self.updateInterface(with: currentWeather)
